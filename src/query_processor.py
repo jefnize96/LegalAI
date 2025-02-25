@@ -19,6 +19,12 @@ class QueryProcessor:
 
     def process(self, query):
         logging.info(f"Query ricevuta: {query}")
+        # Riconoscimento di saluti
+        saluti = ["ciao", "hello", "salve", "buongiorno", "buonasera"]
+        if query.lower().strip() in saluti:
+            logging.info("Rilevato saluto")
+            return "Ciao! Sono LegalAI, il tuo assistente giuridico perfetto. Come posso aiutarti oggi? Chiedimi qualcosa di specifico, come 'Cosa dice l’articolo 2051 del Codice Civile?'"
+
         parsed = self.parser.parse(query)
         intent = parsed["intent"]
         entities = parsed["entities"]
@@ -33,8 +39,8 @@ class QueryProcessor:
             ids = [doc["id"] for doc in docs]
             logging.info(f"Ambiguità rilevata: {ids}")
             return (
-                "Trovati più risultati. Specifica meglio il contesto (es. 'Codice Civile', 'Codice Penale', 'procedura'):\n"
-                + "\n".join(ids)
+                "Trovati più risultati. Specifica meglio il contesto (es. 'Codice Civile', 'Codice Penale', 'procedura') "
+                "o chiedimi qualcosa di più preciso:\n" + "\n".join(ids)
             )
 
         docs_text = "\n".join([
