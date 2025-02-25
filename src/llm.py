@@ -2,7 +2,7 @@ from transformers import pipeline
 
 class LLM:
     def __init__(self):
-        self.model = pipeline("text-generation", model="distilbert-base-uncased", device=-1)
+        self.model = pipeline("text-generation", model="gpt2", device=-1)
 
     def generate_response(self, query, docs_text):
         prompt = (
