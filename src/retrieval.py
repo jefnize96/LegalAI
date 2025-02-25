@@ -18,29 +18,54 @@ class Retriever:
         return [doc for doc in self.db if doc["id"] == id] or []
 
     @lru_cache(maxsize=1000)
-    def search_semantic(self, query, k=3):
+    def search_semantic(self, query, k=10):
         query_embedding = self.model.encode([query])
         distances, indices = self.index.search(np.array(query_embedding), k)
         return [self.db[i] for i in indices[0]]
 
-    def search(self, query, tipo=None, intent="info"):
-        id_match = re.search(r"(CC|CP|Proc|Cass)-[A-Za-z0-9-]+", query)
-        if id_match:
-            results = self.search_by_id(id_match.group(0))
-            if results:
-                return results
-
-        results = self.search_semantic(query, k=5)
-        if tipo:
-            results = [r for r in results if r["type"] == tipo]
+    def search(self, query, tipo=None, intent=None):
+        # Ricerca semantica iniziale più ampia
+        results = self.search_semantic(query, k=10)
         
-        if "Codice Civile" in query:
-            results = [r for r in results if "CC-" in r["id"]]
-        elif "Codice Penale" in query:
-            results = [r for r in results if "CP-" in r["id"]]
-        elif any(w in query.lower() for w in ["procedura", "caso di", "fare in"]):
-            results = [r for r in results if "Proc-" in r["id"]]
-        elif "sentenza" in query.lower():
-            results = [r for r in results if "Cass-" in r["id"]]
+        # Filtraggio intelligente basato sul contesto
+        filtered_results = []
         
-        return results
+        # Cerca riferimenti diretti (es. articoli citati)
+        direct_refs = re.finditer(r"(CC|CP|Proc|Cass)-[A-Za-z0-9-]+", query)
+        for ref in direct_refs:
+            ref_results = self.search_by_id(ref.group(0))
+            filtered_results.extend(ref_results)
+            
+            # Cerca anche documenti correlati (es. sentenze che citano l'articolo)
+            for doc in self.db:
+                if "riferimenti" in doc["structure"] and ref.group(0) in doc["structure"]["riferimenti"]:
+                    filtered_results.append(doc)
+        
+        # Analisi semantica per trovare documenti correlati
+        query_parts = query.lower().split()
+        context_keywords = {
+            "civile": ["CC-", "civile", "contratto", "risarcimento", "danno"],
+            "penale": ["CP-", "penale", "reato", "pena"],
+            "procedura": ["Proc-", "procedura", "processo"],
+            "giurisprudenza": ["Cass-", "sentenza", "cassazione"]
+        }
+        
+        # Aggiungi risultati basati sul contesto
+        for result in results:
+            # Verifica se il documento è rilevante per il contesto
+            is_relevant = False
+            for context_type, keywords in context_keywords.items():
+                if any(kw in query_parts for kw in keywords) and \
+                   any(kw in result["context"].lower() or kw in result["text"].lower() for kw in keywords):
+                    is_relevant = True
+                    break
+            
+            # Aggiungi documenti rilevanti che non sono già inclusi
+            if is_relevant and result not in filtered_results:
+                filtered_results.append(result)
+        
+        # Se non abbiamo trovato risultati diretti, usa i risultati semantici
+        if not filtered_results:
+            filtered_results = results[:5]  # Limita a 5 risultati più rilevanti
+            
+        return filtered_results
