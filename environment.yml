@@ -1,18 +1,16 @@
 name: legalai
 channels:
-  - pytorch
-  - conda-forge
-  - defaults
+  - conda-forge  # Usiamo solo conda-forge per coerenza
 dependencies:
-  - python=3.9
+  - python=3.9.18
   - transformers=4.35.0
   - sentence-transformers=2.2.2
   - faiss-cpu=1.7.4
   - streamlit=1.28.0
-  - spacy
-  - pytorch
-  - swig
-  - spacy-model-it_core_news_lg  # Modello italiano grande
-  - pip
+  - spacy=3.7.2
+  - pytorch=2.0.1
+  - swig=4.1.1
+  - spacy-model-it_core_news_lg=3.7.0
+  - pip=23.3.1
   - pip:
       - rich>=10.14.0
