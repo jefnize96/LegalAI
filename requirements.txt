@@ -1,6 +1,6 @@
 transformers==4.35.0
 sentence-transformers==2.2.2
-faiss-cpu==1.7.4
+faiss-cpu
 streamlit==1.28.0
 spacy==3.7.2
 torch==2.2.0
