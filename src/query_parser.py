@@ -1,15 +1,5 @@
 import spacy
-import os
 
-# Funzione per scaricare il modello se non presente
-def ensure_model_installed(model_name="it_core_news_lg"):
-    try:
-        spacy.load(model_name)
-    except OSError:
-        os.system(f"python -m spacy download {model_name}")
-
-# Assicurati che il modello sia installato
-ensure_model_installed("it_core_news_lg")
 nlp = spacy.load("it_core_news_lg")
 
 class QueryParser:
