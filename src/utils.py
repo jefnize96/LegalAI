@@ -1,7 +1,17 @@
 import json
 import logging
+import os
 
-logging.basicConfig(filename="logs/legalai.log", level=logging.INFO, format="%(asctime)s - %(message)s")
+# Crea la cartella logs se non esiste
+log_dir = "logs"
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, "legalai.log")
+
+logging.basicConfig(
+    filename=log_file,
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s"
+)
 
 def validate_entry(entry, db=None):
     required_base = {"id", "type", "text", "context", "structure"}
