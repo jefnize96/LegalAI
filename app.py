@@ -3,11 +3,19 @@ from src.query_processor import QueryProcessor
 from src.utils import update_database
 import json
 from datetime import datetime
+import logging
 
 st.set_page_config(page_title="LegalAI", page_icon="⚖️", layout="wide")
 
+logging.info("Inizio inizializzazione app")
 if "processor" not in st.session_state:
-    st.session_state.processor = QueryProcessor()
+    try:
+        st.session_state.processor = QueryProcessor()
+        logging.info("Processor inizializzato con successo")
+    except Exception as e:
+        logging.error(f"Errore durante inizializzazione processor: {str(e)}")
+        st.error("Errore durante l'inizializzazione dell'app. Controlla i log per dettagli.")
+        st.stop()
 
 if "session_active" not in st.session_state:
     st.session_state.session_active = False
@@ -35,9 +43,13 @@ else:
     query = st.chat_input("Inserisci la tua domanda:")
     if query:
         with st.spinner("Elaborazione in corso..."):
-            response = st.session_state.processor.process(query)
-            st.session_state.chat_history.append({"query": query, "response": response})
-            st.rerun()
+            try:
+                response = st.session_state.processor.process(query)
+                st.session_state.chat_history.append({"query": query, "response": response})
+                st.rerun()
+            except Exception as e:
+                logging.error(f"Errore durante elaborazione query '{query}': {str(e)}")
+                st.error("Errore durante l'elaborazione della query. Controlla i log.")
 
     if st.button("Termina sessione"):
         st.session_state.session_active = False
@@ -49,6 +61,10 @@ with st.sidebar:
     st.subheader("Aggiorna il database")
     uploaded_file = st.file_uploader("Carica un nuovo database.json", type="json")
     if uploaded_file:
-        new_data = json.load(uploaded_file)
-        update_database("data/database.json", new_data)
-        st.success("Database aggiornato con successo!")
+        try:
+            new_data = json.load(uploaded_file)
+            update_database("data/database.json", new_data)
+            st.success("Database aggiornato con successo!")
+        except Exception as e:
+            logging.error(f"Errore durante aggiornamento database: {str(e)}")
+            st.error("Errore durante l'aggiornamento del database.")

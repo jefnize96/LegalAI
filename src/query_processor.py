@@ -5,9 +5,17 @@ import logging
 
 class QueryProcessor:
     def __init__(self):
-        self.llm = LLM()
-        self.retriever = Retriever()
-        self.parser = QueryParser()
+        logging.info("Inizializzazione QueryProcessor")
+        try:
+            self.llm = LLM()
+            logging.info("LLM inizializzato")
+            self.retriever = Retriever()
+            logging.info("Retriever inizializzato")
+            self.parser = QueryParser()
+            logging.info("QueryParser inizializzato")
+        except Exception as e:
+            logging.error(f"Errore durante inizializzazione QueryProcessor: {str(e)}")
+            raise
 
     def process(self, query):
         logging.info(f"Query ricevuta: {query}")
