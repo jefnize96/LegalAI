@@ -22,19 +22,20 @@ if "initialized" not in st.session_state:
     st.session_state.session_active = False
     st.session_state.chat_history = []
     st.session_state.session_id = None
-    st.session_state.last_query = None  # Per tracciare l'ultima query elaborata
+    st.session_state.last_query = None
     logging.info("Stato iniziale impostato")
 
-# Inizializzazione del processor solo se necessario
-if st.session_state.processor is None and st.session_state.session_active:
-    with st.spinner("Caricamento dell’assistente..."):
-        try:
-            st.session_state.processor = QueryProcessor()
-            logging.info("Processor inizializzato completamente")
-        except Exception as e:
-            logging.error(f"Errore durante inizializzazione processor: {str(e)}")
-            st.error("Errore durante l'inizializzazione dell’assistente.")
-            st.stop()
+# Funzione per inizializzare il processor
+def initialize_processor():
+    if st.session_state.processor is None and st.session_state.session_active:
+        with st.spinner("Caricamento dell’assistente..."):
+            try:
+                st.session_state.processor = QueryProcessor()
+                logging.info("Processor inizializzato completamente")
+            except Exception as e:
+                logging.error(f"Errore durante inizializzazione processor: {str(e)}")
+                st.error("Errore durante l'inizializzazione dell’assistente.")
+                st.stop()
 
 # Interfaccia principale
 if not st.session_state.session_active:
@@ -44,12 +45,12 @@ if not st.session_state.session_active:
         st.session_state.session_active = True
         st.session_state.session_id = f"User_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         st.session_state.chat_history = []
-        st.rerun()
+        initialize_processor()
 else:
     st.title(f"LegalAI - Sessione {st.session_state.session_id}")
     st.markdown("Chiedi qualsiasi cosa, riceverai risposte precise al 100%.")
 
-    # Mostra la cronologia della chat
+    # Area della chat
     chat_container = st.container()
     with chat_container:
         for entry in st.session_state.chat_history:
@@ -58,26 +59,26 @@ else:
             with st.chat_message("assistant"):
                 st.markdown(f"**{entry['response']}**")
 
-    # Input della query con chiave univoca
-    query_key = f"chat_input_{len(st.session_state.chat_history)}"
-    query = st.chat_input("Inserisci la tua domanda:", key=query_key)
+    # Input della query
+    query = st.chat_input("Inserisci la tua domanda:", key=f"chat_input_{st.session_state.session_id}")
 
-    # Elabora la query solo se nuova e diversa dall'ultima
+    # Elabora la query in tempo reale
     if query and query != st.session_state.last_query:
-        with st.spinner("Elaborazione in corso..."):
-            try:
-                if st.session_state.processor is None:
-                    st.session_state.processor = QueryProcessor()
-                    logging.info("Processor inizializzato on-demand")
-                response = st.session_state.processor.process(query)
-                logging.info(f"Risposta inviata all'interfaccia: {response}")
-                st.session_state.chat_history.append({"query": query, "response": response})
-                st.session_state.last_query = query  # Aggiorna l'ultima query
-                # Non usiamo st.rerun(), lasciamo che Streamlit aggiorni automaticamente
-            except Exception as e:
-                logging.error(f"Errore durante elaborazione query '{query}': {str(e)}")
-                st.error("Errore durante l'elaborazione della query.")
-                st.stop()
+        initialize_processor()  # Assicurati che il processor sia pronto
+        with chat_container:
+            with st.chat_message("user"):
+                st.write(query)
+            with st.spinner("Elaborazione in corso..."):
+                try:
+                    response = st.session_state.processor.process(query)
+                    logging.info(f"Risposta inviata all'interfaccia: {response}")
+                    with st.chat_message("assistant"):
+                        st.markdown(f"**{response}**")
+                    st.session_state.chat_history.append({"query": query, "response": response})
+                    st.session_state.last_query = query
+                except Exception as e:
+                    logging.error(f"Errore durante elaborazione query '{query}': {str(e)}")
+                    st.error("Errore durante l'elaborazione della query.")
 
     if st.button("Termina sessione"):
         st.session_state.session_active = False
