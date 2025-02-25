@@ -1,7 +1,7 @@
-transformers==4.35.0
-sentence-transformers==2.2.2
+transformers
+sentence-transformers
 faiss-cpu
-streamlit==1.28.0
+streamlit
 spacy
 torch
-rich>=10.14.0
+rich
