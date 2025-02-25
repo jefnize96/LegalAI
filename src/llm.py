@@ -2,8 +2,7 @@ from transformers import pipeline
 
 class LLM:
     def __init__(self):
-        # Placeholder: Sostituisci con un modello reale per produzione (es. Mistral)
-        self.model = pipeline("text-generation", model="facebook/opt-350m", device=-1)
+        self.model = pipeline("text-generation", model="distilbert-base-uncased", device=-1)
 
     def generate_response(self, query, docs_text):
         prompt = (
