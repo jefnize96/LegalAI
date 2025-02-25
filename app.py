@@ -16,14 +16,8 @@ st.set_page_config(page_title="LegalAI", page_icon="⚖️", layout="wide")
 
 logging.info("Inizio inizializzazione app")
 if "processor" not in st.session_state:
-    try:
-        # Inizializzazione minima per passare il controllo di salute
-        st.session_state.processor = None
-        logging.info("Processor inizializzato come None per il controllo di salute")
-    except Exception as e:
-        logging.error(f"Errore durante inizializzazione minima: {str(e)}")
-        st.error("Errore durante l'inizializzazione dell'app.")
-        st.stop()
+    st.session_state.processor = None
+    logging.info("Processor inizializzato come None per il controllo di salute")
 
 if "session_active" not in st.session_state:
     st.session_state.session_active = False
@@ -37,30 +31,44 @@ if not st.session_state.session_active:
         st.session_state.session_active = True
         st.session_state.session_id = f"User_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         st.session_state.chat_history = []
-        # Inizializzazione completa solo dopo il click
         if st.session_state.processor is None:
             with st.spinner("Caricamento dell’assistente..."):
-                st.session_state.processor = QueryProcessor()
-                logging.info("Processor inizializzato completamente")
+                try:
+                    st.session_state.processor = QueryProcessor()
+                    logging.info("Processor inizializzato completamente")
+                except Exception as e:
+                    logging.error(f"Errore durante inizializzazione processor: {str(e)}")
+                    st.error("Errore durante l'inizializzazione dell’assistente.")
+                    st.stop()
         st.rerun()
 else:
     st.title(f"LegalAI - Sessione {st.session_state.session_id}")
     st.markdown("Chiedi qualsiasi cosa, riceverai risposte precise al 100%.")
 
+    # Mostra la cronologia della chat
     for entry in st.session_state.chat_history:
         with st.chat_message("user"):
             st.write(entry["query"])
         with st.chat_message("assistant"):
             st.markdown(f"**{entry['response']}**")
 
+    # Input della query
     query = st.chat_input("Inserisci la tua domanda:")
     if query:
-        with st.spinner("Elaborazione in corso..."):
-            try:
-                if st.session_state.processor is None:
+        if st.session_state.processor is None:
+            with st.spinner("Caricamento dell’assistente..."):
+                try:
                     st.session_state.processor = QueryProcessor()
                     logging.info("Processor inizializzato on-demand")
+                except Exception as e:
+                    logging.error(f"Errore durante inizializzazione on-demand: {str(e)}")
+                    st.error("Errore durante l'inizializzazione dell’assistente.")
+                    st.stop()
+        
+        with st.spinner("Elaborazione in corso..."):
+            try:
                 response = st.session_state.processor.process(query)
+                logging.info(f"Risposta inviata all'interfaccia: {response}")
                 st.session_state.chat_history.append({"query": query, "response": response})
                 st.rerun()
             except Exception as e:
@@ -73,6 +81,7 @@ else:
         st.session_state.chat_history = []
         st.session_state.session_id = None
         st.session_state.processor = None
+        logging.info("Sessione terminata")
         st.rerun()
 
 with st.sidebar:
@@ -84,7 +93,7 @@ with st.sidebar:
             update_database("data/database.json", new_data)
             st.success("Database aggiornato con successo!")
             if st.session_state.processor is not None:
-                st.session_state.processor = QueryProcessor()  # Ricarica il processor
+                st.session_state.processor = QueryProcessor()
                 logging.info("Processor ricaricato dopo aggiornamento database")
         except Exception as e:
             logging.error(f"Errore durante aggiornamento database: {str(e)}")
