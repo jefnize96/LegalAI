@@ -88,8 +88,25 @@
       "numero": "12345",
       "anno": "2020",
       "sezione": "Civile",
-      "riferimenti": [
-        "CC-L4-T9-C1-Art.2051"
+      "riferimenti": ["CC-L4-T9-C1-Art.2051"]
+    }
+  },
+  {
+    "id": "CC-L4-T9-C1-Art.2051",
+    "type": "legge",
+    "text": "Ciascuno è responsabile del danno cagionato dalle cose che ha in custodia, salvo che provi il caso fortuito.",
+    "context": "Codice Civile, Responsabilità da cose in custodia",
+    "structure": {
+      "codice": "Codice Civile",
+      "libro": "Libro Quarto",
+      "titolo": "Titolo IX - Dei fatti illeciti",
+      "capo": "Capo I - Disposizioni generali",
+      "articolo": "2051",
+      "commi": [
+        {
+          "numero": "unico",
+          "testo": "Ciascuno è responsabile del danno cagionato dalle cose che ha in custodia, salvo che provi il caso fortuito."
+        }
       ]
     }
   }
