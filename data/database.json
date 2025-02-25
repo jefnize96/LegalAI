@@ -1,0 +1,96 @@
+[
+  {
+    "id": "CC-L4-T9-C1-Art.2043",
+    "type": "legge",
+    "text": "Chiunque cagiona ad altri un danno ingiusto mediante fatto doloso o colposo è tenuto a risarcire il danno.",
+    "context": "Codice Civile, Responsabilità civile",
+    "structure": {
+      "codice": "Codice Civile",
+      "libro": "Libro Quarto",
+      "titolo": "Titolo IX - Dei fatti illeciti",
+      "capo": "Capo I - Disposizioni generali",
+      "articolo": "2043",
+      "commi": [
+        {
+          "numero": "unico",
+          "testo": "Chiunque cagiona ad altri un danno ingiusto mediante fatto doloso o colposo è tenuto a risarcire il danno."
+        }
+      ]
+    }
+  },
+  {
+    "id": "CC-L1-T1-C1-Art.1",
+    "type": "legge",
+    "text": "La capacità giuridica si acquista al momento della nascita.",
+    "context": "Codice Civile, Persone fisiche",
+    "structure": {
+      "codice": "Codice Civile",
+      "libro": "Libro Primo",
+      "titolo": "Titolo I - Delle persone fisiche",
+      "capo": "Capo I",
+      "articolo": "1",
+      "commi": [
+        {
+          "numero": "1",
+          "testo": "La capacità giuridica si acquista al momento della nascita."
+        }
+      ]
+    }
+  },
+  {
+    "id": "CP-L1-T1-C1-Art.1",
+    "type": "legge",
+    "text": "Nessuno può essere punito per un fatto che non sia espressamente preveduto come reato dalla legge.",
+    "context": "Codice Penale, Principi generali",
+    "structure": {
+      "codice": "Codice Penale",
+      "libro": "Libro Primo",
+      "titolo": "Titolo I - Della legge penale",
+      "capo": "Capo I",
+      "articolo": "1",
+      "commi": [
+        {
+          "numero": "unico",
+          "testo": "Nessuno può essere punito per un fatto che non sia espressamente preveduto come reato dalla legge."
+        }
+      ]
+    }
+  },
+  {
+    "id": "Proc-Emerg-Incendio-001",
+    "type": "procedura",
+    "text": "In caso di incendio: 1) Evacuare immediatamente l’edificio, 2) Contattare i vigili del fuoco al 115, 3) Attendere soccorsi in un punto sicuro.",
+    "context": "Procedura di emergenza per incendio",
+    "structure": {
+      "evento": "Incendio",
+      "steps": [
+        {
+          "step": 1,
+          "azione": "Evacuare immediatamente l’edificio"
+        },
+        {
+          "step": 2,
+          "azione": "Contattare i vigili del fuoco al 115"
+        },
+        {
+          "step": 3,
+          "azione": "Attendere soccorsi in un punto sicuro"
+        }
+      ]
+    }
+  },
+  {
+    "id": "Cass-Civ-12345-2020",
+    "type": "sentenza",
+    "text": "La responsabilità ex art. 2051 è oggettiva e non richiede prova di colpa, ma il custode può liberarsi dimostrando il caso fortuito.",
+    "context": "Cassazione Civile, Responsabilità da cose in custodia",
+    "structure": {
+      "numero": "12345",
+      "anno": "2020",
+      "sezione": "Civile",
+      "riferimenti": [
+        "CC-L4-T9-C1-Art.2051"
+      ]
+    }
+  }
+]
