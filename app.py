@@ -14,16 +14,28 @@ logging.basicConfig(
 
 st.set_page_config(page_title="LegalAI", page_icon="⚖️", layout="wide")
 
-logging.info("Inizio inizializzazione app")
-if "processor" not in st.session_state:
+# Log iniziale solo alla prima esecuzione
+if "initialized" not in st.session_state:
+    logging.info("Inizio inizializzazione app")
+    st.session_state.initialized = True
     st.session_state.processor = None
-    logging.info("Processor inizializzato come None per il controllo di salute")
-
-if "session_active" not in st.session_state:
     st.session_state.session_active = False
     st.session_state.chat_history = []
     st.session_state.session_id = None
+    logging.info("Stato iniziale impostato")
 
+# Inizializzazione del processor solo se necessario
+if st.session_state.processor is None and st.session_state.session_active:
+    with st.spinner("Caricamento dell’assistente..."):
+        try:
+            st.session_state.processor = QueryProcessor()
+            logging.info("Processor inizializzato completamente")
+        except Exception as e:
+            logging.error(f"Errore durante inizializzazione processor: {str(e)}")
+            st.error("Errore durante l'inizializzazione dell’assistente.")
+            st.stop()
+
+# Interfaccia principale
 if not st.session_state.session_active:
     st.title("LegalAI - Assistente Giuridico Perfetto")
     st.markdown("Benvenuto! Inizia una sessione per utilizzare l’assistente.")
@@ -31,15 +43,6 @@ if not st.session_state.session_active:
         st.session_state.session_active = True
         st.session_state.session_id = f"User_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         st.session_state.chat_history = []
-        if st.session_state.processor is None:
-            with st.spinner("Caricamento dell’assistente..."):
-                try:
-                    st.session_state.processor = QueryProcessor()
-                    logging.info("Processor inizializzato completamente")
-                except Exception as e:
-                    logging.error(f"Errore durante inizializzazione processor: {str(e)}")
-                    st.error("Errore durante l'inizializzazione dell’assistente.")
-                    st.stop()
         st.rerun()
 else:
     st.title(f"LegalAI - Sessione {st.session_state.session_id}")
@@ -55,18 +58,11 @@ else:
     # Input della query
     query = st.chat_input("Inserisci la tua domanda:")
     if query:
-        if st.session_state.processor is None:
-            with st.spinner("Caricamento dell’assistente..."):
-                try:
-                    st.session_state.processor = QueryProcessor()
-                    logging.info("Processor inizializzato on-demand")
-                except Exception as e:
-                    logging.error(f"Errore durante inizializzazione on-demand: {str(e)}")
-                    st.error("Errore durante l'inizializzazione dell’assistente.")
-                    st.stop()
-        
         with st.spinner("Elaborazione in corso..."):
             try:
+                if st.session_state.processor is None:
+                    st.session_state.processor = QueryProcessor()
+                    logging.info("Processor inizializzato on-demand")
                 response = st.session_state.processor.process(query)
                 logging.info(f"Risposta inviata all'interfaccia: {response}")
                 st.session_state.chat_history.append({"query": query, "response": response})
