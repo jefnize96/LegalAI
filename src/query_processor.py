@@ -3,6 +3,13 @@ from .retrieval import Retriever
 from .query_parser import QueryParser
 import logging
 
+# Logging visibile nella console (già impostato in app.py o utils.py, ma assicuriamo consistenza)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler()]
+)
+
 class QueryProcessor:
     def __init__(self):
         logging.info("Inizializzazione QueryProcessor")
@@ -19,7 +26,6 @@ class QueryProcessor:
 
     def process(self, query):
         logging.info(f"Query ricevuta: {query}")
-        # Riconoscimento di saluti
         saluti = ["ciao", "hello", "salve", "buongiorno", "buonasera"]
         if query.lower().strip() in saluti:
             logging.info("Rilevato saluto")
