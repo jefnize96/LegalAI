@@ -1,9 +1,8 @@
-https://files.pythonhosted.org/packages/6c/1e/0382adbf009c8e5437b95afab6ab53277f6a1653ede03f3a089655e513d6/transformers-4.35.0-py3-none-any.whl
-https://files.pythonhosted.org/packages/71/91/6e574228bc4e2e300c3910e58c5d2d8b4f6a8e573f9ad110a1886bc2acfe/sentence_transformers-2.2.2-py3-none-any.whl
-https://files.pythonhosted.org/packages/ec/05/e0e5a30d586e39f74b4e0921524c5e01fa47d26d2dbec0ba91da56d8aa19/faiss_cpu-1.7.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-https://files.pythonhosted.org/packages/17/62/1e8dd251ed2a0b2f5f8eaea84e26c361e16ae67cb0b0ca1f0073de6f82c1/streamlit-1.28.0-py2.py3-none-any.whl
-https://files.pythonhosted.org/packages/4b/88/63df553821e8e0e0b44d76c5d7f7a7cf0f40c7cf5a29b8ddabb790ec4286/spacy-3.7.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-https://files.pythonhosted.org/packages/8c/2a/53f215d6fc1e8d2e84f03e8772dc3180f256e7dec7c5a7e291d97e68a76f/torch-2.0.1-cp312-cp312-manylinux1_x86_64.whl
-https://files.pythonhosted.org/packages/60/ba/4e5e586d3eb2037821790f05e8205d9639ad2ead1e8a8fe687bc7aa17fa9/numpy-1.26.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-https://files.pythonhosted.org/packages/32/85/12325fbfc503998a513c518ca892350a4f5138c4dddaf743da26ad55b7e6/rich-13.9.4-py3-none-any.whl
-https://github.com/explosion/spacy-models/releases/download/it_core_news_lg-3.7.0/it_core_news_lg-3.7.0-py3-none-any.whl
+transformers==4.35.0
+sentence-transformers==2.2.2
+faiss-cpu==1.7.4
+streamlit==1.28.0
+spacy==3.7.2
+torch==2.0.1
+numpy==1.24.4  # Versione più vecchia per compatibilità
+rich==13.9.4
