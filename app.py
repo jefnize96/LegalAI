@@ -14,7 +14,7 @@ logging.basicConfig(
 
 st.set_page_config(page_title="LegalAI", page_icon="⚖️", layout="wide")
 
-# Log iniziale solo alla prima esecuzione
+# Inizializzazione iniziale solo una volta
 if "initialized" not in st.session_state:
     logging.info("Inizio inizializzazione app")
     st.session_state.initialized = True
@@ -22,6 +22,7 @@ if "initialized" not in st.session_state:
     st.session_state.session_active = False
     st.session_state.chat_history = []
     st.session_state.session_id = None
+    st.session_state.last_query = None  # Per tracciare l'ultima query elaborata
     logging.info("Stato iniziale impostato")
 
 # Inizializzazione del processor solo se necessario
@@ -49,15 +50,20 @@ else:
     st.markdown("Chiedi qualsiasi cosa, riceverai risposte precise al 100%.")
 
     # Mostra la cronologia della chat
-    for entry in st.session_state.chat_history:
-        with st.chat_message("user"):
-            st.write(entry["query"])
-        with st.chat_message("assistant"):
-            st.markdown(f"**{entry['response']}**")
+    chat_container = st.container()
+    with chat_container:
+        for entry in st.session_state.chat_history:
+            with st.chat_message("user"):
+                st.write(entry["query"])
+            with st.chat_message("assistant"):
+                st.markdown(f"**{entry['response']}**")
 
-    # Input della query
-    query = st.chat_input("Inserisci la tua domanda:")
-    if query:
+    # Input della query con chiave univoca
+    query_key = f"chat_input_{len(st.session_state.chat_history)}"
+    query = st.chat_input("Inserisci la tua domanda:", key=query_key)
+
+    # Elabora la query solo se nuova e diversa dall'ultima
+    if query and query != st.session_state.last_query:
         with st.spinner("Elaborazione in corso..."):
             try:
                 if st.session_state.processor is None:
@@ -66,7 +72,8 @@ else:
                 response = st.session_state.processor.process(query)
                 logging.info(f"Risposta inviata all'interfaccia: {response}")
                 st.session_state.chat_history.append({"query": query, "response": response})
-                st.rerun()
+                st.session_state.last_query = query  # Aggiorna l'ultima query
+                # Non usiamo st.rerun(), lasciamo che Streamlit aggiorni automaticamente
             except Exception as e:
                 logging.error(f"Errore durante elaborazione query '{query}': {str(e)}")
                 st.error("Errore durante l'elaborazione della query.")
@@ -77,6 +84,7 @@ else:
         st.session_state.chat_history = []
         st.session_state.session_id = None
         st.session_state.processor = None
+        st.session_state.last_query = None
         logging.info("Sessione terminata")
         st.rerun()
 
